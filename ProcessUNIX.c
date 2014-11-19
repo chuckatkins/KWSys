@@ -53,10 +53,18 @@ do.
 # define FD_SETSIZE 16384
 #endif
 
+/* If building in strict ISO compliance, request additional features from the
+  SUSv2 (Single UNIX Specification v2 or UNIX 98) spec */
+#if !defined(_XOPEN_SOURCE)
+# define _XOPEN_SOURCE 500
+#elif _XOPEN_SOURCE < 500
+# error "A minimum of SUSv2 is required"
+#endif
+
 #include <stddef.h>    /* ptrdiff_t */
 #include <stdio.h>     /* snprintf */
 #include <stdlib.h>    /* malloc, free */
-#include <string.h>    /* strdup, strerror, memset */
+#include <string.h>    /* strcpy, strerror, memset */
 #include <sys/time.h>  /* struct timeval */
 #include <sys/types.h> /* pid_t, fd_set */
 #include <sys/wait.h>  /* waitpid */
