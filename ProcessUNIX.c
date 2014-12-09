@@ -2652,15 +2652,15 @@ static int kwsysProcessesAdd(kwsysProcess* cp)
        interrupted.  */
     struct sigaction newSigChldAction;
     memset(&newSigChldAction, 0, sizeof(struct sigaction));
+    newSigChldAction.sa_flags = SA_NOCLDSTOP | SA_NOCLDWAIT;
 #if KWSYSPE_USE_SIGINFO
     newSigChldAction.sa_sigaction = kwsysProcessesSignalHandler;
-    newSigChldAction.sa_flags = SA_NOCLDSTOP | SA_SIGINFO;
+    newSigChldAction.sa_flags |= SA_SIGINFO;
 # ifdef SA_RESTART
     newSigChldAction.sa_flags |= SA_RESTART;
 # endif
 #else
     newSigChldAction.sa_handler = kwsysProcessesSignalHandler;
-    newSigChldAction.sa_flags = SA_NOCLDSTOP;
 #endif
     while((sigaction(SIGCHLD, &newSigChldAction,
                      &kwsysProcessesOldSigChldAction) < 0) &&
@@ -2756,7 +2756,7 @@ static void kwsysProcessesSignalHandler(int signum
   struct sigaction newSigChldAction;
   memset(&newSigChldAction, 0, sizeof(struct sigaction));
   newSigChldAction.sa_handler = kwsysProcessesSignalHandler;
-  newSigChldAction.sa_flags = SA_NOCLDSTOP;
+  newSigChldAction.sa_flags = SA_NOCLDSTOP | SA_NOCLDWAIT;
   while((sigaction(SIGCHLD, &newSigChldAction,
                    &kwsysProcessesOldSigChldAction) < 0) &&
         (errno == EINTR));
